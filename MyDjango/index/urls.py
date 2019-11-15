@@ -2,6 +2,5 @@ from django.urls import path, re_path
 from . import views
 
 urlpatterns = [
-    path('index/', views.ProductList.as_view()),
-    path('index/<id>.html', views.ProductList.as_view(), {'name': 'phone'})
+    path('', views.index),
 ]
