@@ -1,23 +1,18 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import csv
+from .models import Product
 
 def index(request):
-    # return HttpResponse("Hello world!")
-    return render(request, 'index.html', context={"title": '首页'}, status=500)
+    type_list = Product.objects.values('type').distinct()
+    name_list = Product.objects.values('name', 'type')
+    # context = {
+    #     'title': '首页',
+    #     'type_list': type_list,
+    #     'name_list': name_list,
+    # }
+    title = '首页'
+    return render(request, 'index.html', context=locals(), status=200)
 
-def mydate(request, year, month, day):
-    return HttpResponse("%s/%s/%s" % (str(year), str(month), str(day)))
-
-def myyear(request, year):
-    return render(request, 'myyear.html')
-
-def myyear_dict(request, year, month):
-    return render(request, 'myyear_dict.html', {'month': month})
-
-def download(request):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
-    writer = csv.writer(response)
-    writer.writerow(['First row', 'A', 'B', 'C'])
-    return response
+def login(request):
+    return redirect('/')

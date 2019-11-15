@@ -63,6 +63,7 @@
 </nav>
 <!-- banner 广告 -->
 <div id="banner">
+        <!--
 {#    <ul id="cate_box" class="lf">#}
 {#        <li>#}
 {#            <h3><a href="#">手机</a></h3>#}
@@ -73,6 +74,21 @@
 {#            <p><span>平板电脑 </span><span>手环</span><span>手表</span></p>#}
 {#        </li>#}
 {#    </ul>#}
+    -->
+    <ul id="cate_box" class="lf">
+        {% for type in type_list %}
+        <li>
+            <h3><a href="#">{{ type.type }}</a></h3>
+            <p>
+                {% for name in name_list %}
+                    {% if name.type == type.type %}
+                        <span>{{ name.name }}</span>
+                    {% endif %}
+                {% endfor %}
+            </p>
+        </li>
+        {% endfor %}
+    </ul>
 
     <ul id="cate_box" class="lf">
         {% for type in type_list %}
