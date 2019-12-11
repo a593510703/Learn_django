@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.html import format_html
 
 class Type(models.Model):
     id = models.AutoField(primary_key=True)
@@ -11,7 +12,34 @@ class Product(models.Model):
     name = models.CharField(max_length=50)
     weight = models.CharField(max_length=20)
     size = models.CharField(max_length=20)
-    type = models.ForeignKey(Type, on_delete=models.CASCADE)
+    type = models.ForeignKey(Type, on_delete=models.CASCADE, verbose_name='产品类型')
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = '产品信息'
+        verbose_name_plural = '产品信息'
+
+    def colored_type(self):
+        s = self.type.type_name
+        tmp_dict = {
+            '手机': 'red',
+            '平板电脑': 'blue',
+            '智能穿戴': 'green',
+        }
+        color_code = 'yellow' # default is yellow
+        for k, v in tmp_dict.items():
+            if k in s:
+                color_code = v
+        return format_html(
+            '<span style ="color: {};">{}</span>',
+            color_code,
+            self.type,
+        )
+    
+    colored_type.short_description = '带颜色的产品类型'
+            
 
 # 一对一
 class Performer(models.Model):
