@@ -3,9 +3,40 @@ from django.http import HttpResponse
 import csv
 from .models import Product
 from django.views.generic import ListView
+from .form import *
 
 def index(request):
-    type_list = Product.objects.values('type').distinct()
-    name_list = Product.objects.values('name','type')
-    context = {'title': '首页', 'type_list': type_list, 'name_list': name_list}
-    return render(request, 'index.html', context=context, status=200)
+    if request.method == 'GET':
+        product = ProductForm()
+        return render(request, 'data_form.html', locals())
+    else:
+        product = ProductForm(request.POST)
+        if product.is_valid():
+            name = product['name']
+            cname = product.cleaned_data['name']
+            return HttpResponse('提交成功')
+        else:
+            error_msg = product.errors.as_json()
+            print(error_msg)
+            return render(request, 'data_form.html', locals())
+
+def model_index(request, id):
+    if request.method == 'GET':
+        instance = Product.objects.filter(id=id)
+        if instance:
+            product = ProductModelForm(instance=instance[0])
+        else:
+            product = ProductModelForm()
+        return render(request, 'data_form.html', locals())
+    else:
+        product = ProductModelForm(request.POST)
+        if product.is_valid():
+            weight = product.cleaned_data['weight']
+            product_db = product.save(commit=False)
+            product_db.name= '我的 iPhone'
+            product_db.save()
+            return HttpResponse('提交成功！weight清洗后的数据为: ' + weight)
+        else:
+            error_msg = product.errors.as_json()
+            print(error_msg)
+            return render(request, 'data_form.html', locals())

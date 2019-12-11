@@ -3,6 +3,8 @@ from django.db import models
 class Type(models.Model):
     id = models.AutoField(primary_key=True)
     type_name = models.CharField(max_length=20)
+    def __str__(self):
+        return self.type_name
 
 class Product(models.Model):
     id = models.AutoField(primary_key=True)
