@@ -21,5 +21,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     # 购物车
     path('ShoppingCar.html', views.ShoppingCarView, name='ShoppingCar'),
-    path('message.html', views.messageView, name='message'),
+    # path('message.html', views.messageView, name='message'),
+    path('pagination/<int:page>.html', views.paginationView, name='pagination'),
 ]

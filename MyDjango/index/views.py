@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.cache import cache_page
 from django.contrib import messages
 from django.template import RequestContext
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from .models import *
 
 # 使用login_required和permission_required分别对用户登录验证和用户权限验证
 @login_required(login_url='/user/login.html')
@@ -51,3 +53,14 @@ def messageView(request):
     messages.error(request, ' 信息错误 ')
     messages.add_message(request, messages.INFO, '信息提示')
     return render(request, 'message.html', locals(), RequestContext(request))
+
+def paginationView(request, page):
+    Product_list = Product.objects.all()
+    paginator = Paginator(Product_list, 3)
+    try:
+        pageInfo = paginator.page(page)
+    except PageNotAnInteger:
+        pageInfo = paginator.page(1)
+    except EmptyPage:
+        pageInfo = paginator.page(paginator.num_pages)
+    return render(request, 'pagination.html', locals())
