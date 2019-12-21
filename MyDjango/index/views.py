@@ -1,6 +1,8 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.cache import cache_page
+from django.contrib import messages
+from django.template import RequestContext
 
 # 使用login_required和permission_required分别对用户登录验证和用户权限验证
 @login_required(login_url='/user/login.html')
@@ -41,3 +43,11 @@ def ShoppingCarView(request):
 		request.session['product_info'] = product_list
 		return redirect('/ShoppingCar.html')
 	return render(request, 'ShoppingCar.html', locals())
+
+def messageView(request):
+    messages.info(request, ' 信息提示 ')
+    messages.success(request, ' 信息正确 ')
+    messages.warning(request, ' 信息警告 ')
+    messages.error(request, ' 信息错误 ')
+    messages.add_message(request, messages.INFO, '信息提示')
+    return render(request, 'message.html', locals(), RequestContext(request))
