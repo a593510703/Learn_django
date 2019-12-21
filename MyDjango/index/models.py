@@ -18,6 +18,11 @@ class Product(models.Model):
         return self.name
     
     class Meta:
+
+        permissions = (
+            ('visit_Product', 'Can visit Product'),
+        )
+
         verbose_name = '产品信息'
         verbose_name_plural = '产品信息'
 
