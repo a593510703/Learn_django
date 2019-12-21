@@ -1,31 +1,24 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
-import csv
-from .models import Product
-from django.views.generic import ListView
-from .form import *
+from django.contrib.auth.decorators import login_required, permission_required
+from django.views.decorators.cache import cache_page
+
+@login_required(login_url='/user/login.html')
+@permission_required(perm='index.visit_Product', login_url='/user/login.html')
 
 def index(request):
-    username =request.user.username
+    product = request.GET.get('product', '')
+    price = request.GET.get('price', '')
+    if product:
+        product_list = request.session.get('product_info', [])
+        if product not in product_list:
+            product_list.append({'price': price, 'product': product, })
+        request.session['product_info'] = product_list
+        return redirect('/')
     return render(request, 'index.html', locals())
-    
-def model_index(request, id):
-    if request.method == 'GET':
-        instance = Product.objects.filter(id=id)
-        if instance:
-            product = ProductModelForm(instance=instance[0])
-        else:
-            product = ProductModelForm()
-        return render(request, 'data_form.html', locals())
-    else:
-        product = ProductModelForm(request.POST)
-        if product.is_valid():
-            weight = product.cleaned_data['weight']
-            product_db = product.save(commit=False)
-            product_db.name= '我的 iPhone'
-            product_db.save()
-            return HttpResponse('提交成功！weight清洗后的数据为: ' + weight)
-        else:
-            error_msg = product.errors.as_json()
-            print(error_msg)
-            return render(request, 'data_form.html', locals())
+
+@cache_page(timeout=10, cache='MyDjango', key_prefix='MyDjangoView')
+@login_required(login_url='/user/login.html')
+def ShoppingCarView(request):
+    pass
+    return render(request, 'ShoppingCar.html', locals())
+

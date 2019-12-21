@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django.middleware.cache.UpdateCacheMiddleware', # 配置全站缓存
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware', # use Chinese
@@ -51,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware', # 配置全站缓存
 ]
 
 ROOT_URLCONF = 'MyDjango.urls'
@@ -150,3 +152,24 @@ EMAIL_HOST_PASSWORD = 'tnfpbtsiwvclbeee'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 AUTH_USER_MODEL = 'user.MyUser'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache_table',
+        'TIMEOUT': 60,
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,
+            'CULL_FREQUENCY': 3,
+        },
+    },
+    'MyDjango': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'MyDjango_cache_table',
+    },
+}
+
+CACHE_MIDDLEWARE_SECONDS = 15
+CACHE_MIDDLEWARE_ALIAS = 'default'
+CACHE_MIDDLEWARE_KEY_PREFIX = 'MyDjango'
+
